@@ -1,0 +1,73 @@
+[
+  {
+    "timestamp": "2025-09-14T07:25:47.921461",
+    "message": "Initializing ODIN simulation with historical timestamp 2012-08-10T19:24:24.266884",
+    "extras": {}
+  },
+  {
+    "timestamp": "2025-09-14T07:25:47.921461",
+    "message": "Ingested hazard: CME severity=0.215",
+    "extras": {
+      "timestamp": "2012-08-11 15:26:19.684619",
+      "hazard_type": "CME",
+      "severity": 0.215,
+      "description": "Simulated CME severity 0.21"
+    }
+  },
+  {
+    "timestamp": "2025-09-14T07:25:47.921461",
+    "message": "Ingested hazard: CME severity=0.259",
+    "extras": {
+      "timestamp": "2012-08-11 19:11:17.484131",
+      "hazard_type": "CME",
+      "severity": 0.259,
+      "description": "Simulated CME severity 0.26"
+    }
+  },
+  {
+    "timestamp": "2025-09-14T07:25:47.921461",
+    "message": "Computed baseline trajectory",
+    "extras": {
+      "delta_v": 3964.6914924610414,
+      "tof_hr": 119.51348440757769
+    }
+  },
+  {
+    "timestamp": "2025-09-14T07:25:47.921461",
+    "message": "AI proposed: Alternate: Delay Launch 2h",
+    "extras": {
+      "explanation": "Minor event detected; small launch delay (2h) reduces exposure modestly. \u0394v change small.",
+      "delta_v": 4043.9853223102623,
+      "tof": 121.51348440757769
+    }
+  },
+  {
+    "timestamp": "2025-09-14T07:25:47.921461",
+    "message": "Decision outcome: chosen plan Alternate: Delay Launch 2h",
+    "extras": {
+      "ranked": [
+        [
+          "Alternate: Delay Launch 2h",
+          4043.9853223102623,
+          121.51348440757769,
+          0.15975674220378885,
+          1.189
+        ],
+        [
+          "Baseline Hohmann-like",
+          3964.6914924610414,
+          119.51348440757769,
+          0.3195134844075777,
+          1.0
+        ]
+      ],
+      "chosen": "Alternate: Delay Launch 2h",
+      "score": 1.189
+    }
+  },
+  {
+    "timestamp": "2025-09-14T07:25:47.921461",
+    "message": "Hazards detected: ['CME:0.215', 'CME:0.259']. Baseline \u0394v=3964.7 m/s. Chosen: Alternate: Delay Launch 2h. Rationale: highest composite score (see report).",
+    "extras": {}
+  }
+]
