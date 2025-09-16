@@ -6,7 +6,7 @@ import os
 
 # Import backend
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
-from odin_core import Odin
+from backend.odin_core import Odin
 
 # Title
 st.title("🛰️ ODIN - Optimal Dynamic Interplanetary Navigator")

@@ -1,31 +1,51 @@
 [
   {
-    "timestamp": "2025-09-14T07:25:47.921461",
-    "message": "Initializing ODIN simulation with historical timestamp 2012-08-10T19:24:24.266884",
+    "timestamp": "2025-09-15T18:18:32.391257",
+    "message": "Initializing ODIN simulation with historical timestamp 2014-07-06T01:50:02.772942",
     "extras": {}
   },
   {
-    "timestamp": "2025-09-14T07:25:47.921461",
-    "message": "Ingested hazard: CME severity=0.215",
+    "timestamp": "2025-09-15T18:18:32.391639",
+    "message": "Ingested hazard: SolarFlare severity=0.528",
     "extras": {
-      "timestamp": "2012-08-11 15:26:19.684619",
-      "hazard_type": "CME",
-      "severity": 0.215,
-      "description": "Simulated CME severity 0.21"
+      "timestamp": "2014-07-05 08:22:46.633902",
+      "hazard_type": "SolarFlare",
+      "severity": 0.528,
+      "description": "Simulated SolarFlare severity 0.53"
     }
   },
   {
-    "timestamp": "2025-09-14T07:25:47.921461",
-    "message": "Ingested hazard: CME severity=0.259",
+    "timestamp": "2025-09-15T18:18:32.391832",
+    "message": "Ingested hazard: CME severity=0.772",
     "extras": {
-      "timestamp": "2012-08-11 19:11:17.484131",
+      "timestamp": "2014-07-06 07:45:47.349369",
       "hazard_type": "CME",
-      "severity": 0.259,
-      "description": "Simulated CME severity 0.26"
+      "severity": 0.772,
+      "description": "Simulated CME severity 0.77"
     }
   },
   {
-    "timestamp": "2025-09-14T07:25:47.921461",
+    "timestamp": "2025-09-15T18:18:32.391985",
+    "message": "Ingested hazard: CME severity=0.91",
+    "extras": {
+      "timestamp": "2014-07-06 10:24:52.126807",
+      "hazard_type": "CME",
+      "severity": 0.91,
+      "description": "Simulated CME severity 0.91"
+    }
+  },
+  {
+    "timestamp": "2025-09-15T18:18:32.392181",
+    "message": "Ingested hazard: SolarFlare severity=0.477",
+    "extras": {
+      "timestamp": "2014-07-07 09:30:23.420141",
+      "hazard_type": "SolarFlare",
+      "severity": 0.477,
+      "description": "Simulated SolarFlare severity 0.48"
+    }
+  },
+  {
+    "timestamp": "2025-09-15T18:18:32.392950",
     "message": "Computed baseline trajectory",
     "extras": {
       "delta_v": 3964.6914924610414,
@@ -33,25 +53,41 @@
     }
   },
   {
-    "timestamp": "2025-09-14T07:25:47.921461",
-    "message": "AI proposed: Alternate: Delay Launch 2h",
+    "timestamp": "2025-09-15T18:18:32.393719",
+    "message": "AI proposed: Alternate: Higher-Inclination / Safer",
     "extras": {
-      "explanation": "Minor event detected; small launch delay (2h) reduces exposure modestly. \u0394v change small.",
-      "delta_v": 4043.9853223102623,
-      "tof": 121.51348440757769
+      "explanation": "Detected major solar event; propose higher-inclination trajectory to reduce exposure. Expected \u0394v 4757.6 m/s, +23.9 hr.",
+      "delta_v": 4757.6297909532495,
+      "tof": 143.41618128909323
     }
   },
   {
-    "timestamp": "2025-09-14T07:25:47.921461",
-    "message": "Decision outcome: chosen plan Alternate: Delay Launch 2h",
+    "timestamp": "2025-09-15T18:18:32.393811",
+    "message": "AI proposed: Alternate: Delay Launch 8h",
+    "extras": {
+      "explanation": "Or delay launch by 8 hours to allow solar conditions to settle. Estimated radiation reduction 0.160.",
+      "delta_v": 4043.9853223102623,
+      "tof": 127.51348440757769
+    }
+  },
+  {
+    "timestamp": "2025-09-15T18:18:32.394026",
+    "message": "Decision outcome: chosen plan Alternate: Higher-Inclination / Safer",
     "extras": {
       "ranked": [
         [
-          "Alternate: Delay Launch 2h",
+          "Alternate: Higher-Inclination / Safer",
+          4757.6297909532495,
+          143.41618128909323,
+          0.07987837110189443,
+          1.18
+        ],
+        [
+          "Alternate: Delay Launch 8h",
           4043.9853223102623,
-          121.51348440757769,
+          127.51348440757769,
           0.15975674220378885,
-          1.189
+          1.179
         ],
         [
           "Baseline Hohmann-like",
@@ -61,13 +97,13 @@
           1.0
         ]
       ],
-      "chosen": "Alternate: Delay Launch 2h",
-      "score": 1.189
+      "chosen": "Alternate: Higher-Inclination / Safer",
+      "score": 1.18
     }
   },
   {
-    "timestamp": "2025-09-14T07:25:47.921461",
-    "message": "Hazards detected: ['CME:0.215', 'CME:0.259']. Baseline \u0394v=3964.7 m/s. Chosen: Alternate: Delay Launch 2h. Rationale: highest composite score (see report).",
+    "timestamp": "2025-09-15T18:18:32.394111",
+    "message": "Hazards detected: ['SolarFlare:0.528', 'CME:0.772', 'CME:0.91', 'SolarFlare:0.477']. Baseline \u0394v=3964.7 m/s. Chosen: Alternate: Higher-Inclination / Safer. Rationale: highest composite score (see report).",
     "extras": {}
   }
 ]

@@ -1,5 +1,6 @@
 # requirements.txt
-
+fastapi
 streamlit
 plotly
 numpy
+python-dotenv

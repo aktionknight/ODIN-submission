@@ -31,6 +31,8 @@ from typing import List, Dict, Tuple, Optional
 import numpy as np
 import matplotlib.pyplot as plt
 
+from backend.api2 import fetch_donki_cme, fetch_donki_flare, fetch_donki_gst, fetch_donki_sep, fetch_spacetrack_tle
+
 # --------------------------- Utilities & Data Models ---------------------------
 
 @dataclass
@@ -49,35 +51,38 @@ class TrajectoryPlan:
     nodes: List[Tuple[float, float]]  # simplified x,y positions for plotting
     metadata: Dict
 
-# --------------------------- Data Ingestor (Mock) ---------------------------
-class DataIngestor:
-    """Mocked historical data loader. In production, replace with NASA/NOAA/CelesTrak API calls.
-    The loader picks a random timestamp between Jan 1, 2012 and Dec 31, 2018 and generates
-    hazard events around that time to simulate real ingestion.
-    """
-    def __init__(self):
-        self.start = datetime.datetime(2012,1,1)
-        self.end = datetime.datetime(2018,12,31,23,59,59)
-
-    def random_timestamp(self) -> datetime.datetime:
-        span = (self.end - self.start).total_seconds()
-        offset = random.random() * span
-        return self.start + datetime.timedelta(seconds=offset)
-
-    def fetch_historical_hazards(self, ts: datetime.datetime, window_hours:int=72) -> List[HazardEvent]:
-        # Create some mock hazard events around ts within window_hours
-        events = []
-        n = random.randint(1,4)
-        for i in range(n):
-            dt = datetime.timedelta(hours=random.uniform(-window_hours/2, window_hours/2))
-            t = ts + dt
-            typ = random.choices(['CME','SolarFlare','DebrisConjunction'], weights=[0.4,0.4,0.2])[0]
-            severity = round(random.random(),3)
-            desc = f"Simulated {typ} severity {severity:.2f}"
-            events.append(HazardEvent(timestamp=t,hazard_type=typ,severity=severity,description=desc))
-        events.sort(key=lambda e: e.timestamp)
-        print(f"[DataIngestor] Fetched {len(events)} hazard events around {ts.isoformat()}")
-        return events
+# --------------------------- Data Ingestor (API-based) ---------------------------
+def fetch_historical_hazards(ts: datetime.datetime, window_hours: int = 72) -> List[HazardEvent]:
+    """Fetch hazards from APIs in api2.py and convert to HazardEvent list."""
+    hazards = []
+    # Example: fetch CME, Flare, SEP, Debris within window
+    cmes = fetch_donki_cme(ts, window_hours)
+    for c in cmes:
+        hazards.append(HazardEvent(
+            timestamp=c['timestamp'],
+            hazard_type='CME',
+            severity=c.get('severity', 0.5),
+            description=c.get('description', 'CME event')
+        ))
+    flares = fetch_donki_flare(ts, window_hours)
+    for f in flares:
+        hazards.append(HazardEvent(
+            timestamp=f['timestamp'],
+            hazard_type='SolarFlare',
+            severity=f.get('severity', 0.5),
+            description=f.get('description', 'Solar Flare event')
+        ))
+    debris = fetch_spacetrack_tle(ts, window_hours)
+    for d in debris:
+        hazards.append(HazardEvent(
+            timestamp=d['timestamp'],
+            hazard_type='DebrisConjunction',
+            severity=d.get('severity', 0.5),
+            description=d.get('description', 'Debris conjunction')
+        ))
+    hazards.sort(key=lambda e: e.timestamp)
+    print(f"[APIIngestor] Fetched {len(hazards)} hazard events around {ts.isoformat()}")
+    return hazards
 
 # --------------------------- Trajectory Engine ---------------------------
 class TrajectoryEngine:
@@ -171,6 +176,7 @@ class TrajectoryEngine:
         rs = r1 + (r2 - r1) * xs
         ys = np.sin(xs * math.pi) * (r2 - r1) * curvature
         return [(float(rs[i]), float(ys[i])) for i in range(n)]
+
 
 # --------------------------- AI Strategy Co-Pilot (Stub) ---------------------------
 class AIStrategyCopilot:
@@ -290,11 +296,10 @@ class Dashboard:
 
 def run_simulation():
     logger = ExplainableLogger()
-    ingestor = DataIngestor()
-    ts = ingestor.random_timestamp()
-    logger.log(f"Initializing ODIN simulation with historical timestamp {ts.isoformat()}")
+    ts = datetime.datetime.utcnow()
+    logger.log(f"Initializing ODIN simulation with timestamp {ts.isoformat()}")
 
-    hazards = ingestor.fetch_historical_hazards(ts)
+    hazards = fetch_historical_hazards(ts)
     for h in hazards:
         logger.log(f"Ingested hazard: {h.hazard_type} severity={h.severity}", extras=asdict(h))
 
