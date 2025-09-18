@@ -11,6 +11,7 @@ import os, sys
 # Ensure project root is importable when running from backend/
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from odin_prototype import TrajectoryEngine, AIStrategyCopilot, DecisionEngine
+from gemini import analyze_mission_with_ai
 
 app = FastAPI()
 
@@ -286,6 +287,20 @@ def simulate(req: SimulateRequest):
                 "durationSeconds": int(1 * sim_seconds_per_hour)
             })
 
+    # AI Analysis using Gemini LLM
+    ai_analysis = analyze_mission_with_ai(
+        hazards=hazards,
+        timeframe={"start": start.isoformat() + "Z", "end": end.isoformat() + "Z"},
+        baseline_path=baseline_path,
+        adjusted_path=adjusted_path,
+        constraints={
+            "suggestedDelayHours": suggested_delay_hours,
+            "flarePauseHours": flare_pause_hours,
+            "kpMax": kp_max,
+            "dvMultiplierNearEarth": dv_multiplier_near_earth
+        }
+    )
+
     rl = {
         "earth": {"name": "Earth", "pos": (0.0, float(mid) * scale)},
         "moon": {"name": "Moon", "pos": (float(grid_w - 1) * scale, float(mid) * scale)},
@@ -301,8 +316,49 @@ def simulate(req: SimulateRequest):
         },
         "pauses": pauses,
         "timeScale": {"simSecondsPerHour": sim_seconds_per_hour},
-        "debug": {"spacetrackCalled": spacetrack_called, "tleCount": len(tle_debris) if isinstance(tle_debris, list) else 0}
+        "debug": {"spacetrackCalled": spacetrack_called, "tleCount": len(tle_debris) if isinstance(tle_debris, list) else 0},
+        "ai_analysis": ai_analysis
     }
+
+    # Generate multiple trajectory options for visualization
+    trajectory_options = []
+    for i, plan in enumerate(all_plans):
+        # Create different trajectory variations
+        if i == 0:  # Baseline
+            trajectory_options.append({
+                "name": f"{plan.name} (Baseline)",
+                "path": worldify(baseline_path),
+                "color": "deepskyblue",
+                "style": "dot",
+                "width": 2,
+                "is_best": i == best_index
+            })
+        elif i == 1:  # RL Adjusted
+            trajectory_options.append({
+                "name": f"{plan.name} (RL Adjusted)",
+                "path": worldify(adjusted_path),
+                "color": "orange",
+                "style": "solid",
+                "width": 3,
+                "is_best": i == best_index
+            })
+        else:  # Alternative proposals
+            # Generate alternative paths with slight variations
+            alt_path = baseline_path.copy()
+            if len(alt_path) > 4:
+                # Add some variation to create different routes
+                mid_point = len(alt_path) // 2
+                variation = 2 if i % 2 == 0 else -2
+                alt_path[mid_point] = (alt_path[mid_point][0], alt_path[mid_point][1] + variation)
+            
+            trajectory_options.append({
+                "name": f"{plan.name} (Alt {i-1})",
+                "path": worldify(alt_path),
+                "color": ["cyan", "lime", "magenta", "yellow"][(i-2) % 4],
+                "style": "dash",
+                "width": 1,
+                "is_best": i == best_index
+            })
 
     return {
         "timeframe": {"start": start.isoformat() + "Z", "end": end.isoformat() + "Z"},
@@ -311,5 +367,6 @@ def simulate(req: SimulateRequest):
         "bestIndex": int(best_index),
         "report": report,
         "animation": animation,
+        "trajectory_options": trajectory_options,
         "rl": rl
     }

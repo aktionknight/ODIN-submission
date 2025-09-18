@@ -12,7 +12,18 @@ from dotenv import load_dotenv
 # Always load .env from project root
 ROOT_DIR = Path(__file__).resolve().parents[1]   # go up one level from backend/
 ENV_PATH = ROOT_DIR / ".env"
-load_dotenv(dotenv_path=ENV_PATH, override=True)
+
+# Try multiple .env locations
+env_loaded = False
+for env_path in [ENV_PATH, Path(".env"), Path("../.env")]:
+    if env_path.exists():
+        load_dotenv(dotenv_path=env_path, override=True)
+        env_loaded = True
+        print(f"[API] Loaded .env from: {env_path.absolute()}")
+        break
+
+if not env_loaded:
+    print(f"[API] WARNING: No .env file found. Tried: {[str(p) for p in [ENV_PATH, Path('.env'), Path('../.env')]]}")
 
 SPACETRACK_USER = os.getenv("SPACETRACK_USER")
 SPACETRACK_PASS = os.getenv("SPACETRACK_PASS")
