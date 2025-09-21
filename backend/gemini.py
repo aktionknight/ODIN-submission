@@ -317,7 +317,7 @@ Provide evaluation in this JSON format:
             }
 
     def generate_decision_log(self, threat_analysis: Dict, trajectory_evaluation: Dict, 
-                            mission_status: str = "IN_PROGRESS") -> List[str]:
+                            mission_status: str = "IN_PROGRESS", timeframe: Dict = None) -> List[str]:
         """
         Generate human-readable decision logs explaining ODIN's reasoning
         
@@ -325,6 +325,7 @@ Provide evaluation in this JSON format:
             threat_analysis: Results from threat analysis
             trajectory_evaluation: Results from trajectory evaluation
             mission_status: Current mission status
+            timeframe: Mission timeframe information
             
         Returns:
             List of formatted log entries
@@ -336,6 +337,19 @@ Provide evaluation in this JSON format:
             # Mission start log
             logs.append(f"[{timestamp}] 🚀 ODIN MISSION INITIATED")
             logs.append(f"[{timestamp}] Mission Status: {mission_status}")
+            
+            # Timeframe log
+            if timeframe:
+                start_time = timeframe.get("start", "Unknown")
+                end_time = timeframe.get("end", "Unknown")
+                try:
+                    start_dt = datetime.fromisoformat(start_time.replace("Z", "+00:00"))
+                    end_dt = datetime.fromisoformat(end_time.replace("Z", "+00:00"))
+                    logs.append(f"[{timestamp}] 📅 Mission Timeframe: {start_dt.strftime('%Y-%m-%d %H:%M UTC')} to {end_dt.strftime('%Y-%m-%d %H:%M UTC')}")
+                    duration_hours = (end_dt - start_dt).total_seconds() / 3600
+                    logs.append(f"[{timestamp}] ⏱️  Mission Duration: {duration_hours:.1f} hours")
+                except Exception:
+                    logs.append(f"[{timestamp}] 📅 Mission Timeframe: {start_time} to {end_time}")
             
             # Threat assessment log
             threat_level = threat_analysis.get("threat_level", "UNKNOWN")
@@ -507,7 +521,7 @@ def analyze_mission_with_ai(hazards: List[Dict], timeframe: Dict,
         )
         
         # Generate decision logs
-        decision_logs = copilot.generate_decision_log(threat_analysis, trajectory_evaluation)
+        decision_logs = copilot.generate_decision_log(threat_analysis, trajectory_evaluation, "IN_PROGRESS", timeframe)
         
         # Generate AI recommendations
         ai_recommendations = copilot.generate_ai_recommendations(threat_analysis, trajectory_evaluation)
